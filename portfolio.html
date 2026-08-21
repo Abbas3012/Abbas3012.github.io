@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abbas Rohawala — Physical Design &amp; Formal Verification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e0c;
+    --panel: #10160f;
+    --panel-2: #131a13;
+    --border: #23302a;
+    --border-soft: #1a231d;
+    --text: #e7ede8;
+    --text-muted: #8fa096;
+    --text-dim: #5c6b62;
+    --green: #4ade80;
+    --green-dim: #2f7a52;
+    --amber: #f5a623;
+    --amber-dim: #8a5c15;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --maxw: 1080px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    background-image:
+      linear-gradient(var(--border-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border-soft) 1px, transparent 1px);
+    background-size: 48px 48px;
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
+
+  a { color: var(--green); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  :focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .wrap {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ---------- NAV ---------- */
+  header.nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+    background: rgba(10, 14, 12, 0.82);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .nav-inner {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-mark {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--green);
+    letter-spacing: 0.02em;
+  }
+  .nav-mark span { color: var(--text-dim); }
+  .nav-links {
+    display: flex;
+    gap: 24px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .nav-links a { color: var(--text-muted); }
+  .nav-links a:hover { color: var(--green); text-decoration: none; }
+  .nav-toggle { display: none; }
+
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+  }
+
+  /* ---------- EYEBROW ---------- */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--green);
+    letter-spacing: 0.02em;
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow::before { content: '//'; color: var(--text-dim); }
+
+  section { padding: 88px 0; border-bottom: 1px solid var(--border-soft); }
+  section:last-of-type { border-bottom: none; }
+
+  h2.section-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    margin: 0 0 40px;
+    color: var(--text);
+  }
+
+  /* ---------- HERO ---------- */
+  .hero { padding-top: 72px; padding-bottom: 56px; }
+  .hero-tag {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 0 0 18px;
+  }
+  h1.hero-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.4rem, 6.5vw, 4.2rem);
+    line-height: 1.02;
+    margin: 0 0 20px;
+    letter-spacing: -0.01em;
+  }
+  .hero-sub {
+    max-width: 620px;
+    font-size: clamp(1.02rem, 2vw, 1.2rem);
+    color: var(--text-muted);
+    margin: 0 0 32px;
+  }
+  .hero-sub strong { color: var(--text); font-weight: 500; }
+
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 64px; }
+  .btn {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+    padding: 11px 20px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    color: var(--text);
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+  .btn:hover { text-decoration: none; border-color: var(--green); color: var(--green); }
+  .btn.primary { background: var(--green); color: #06120b; border-color: var(--green); }
+  .btn.primary:hover { background: #6ee7a0; color: #06120b; }
+
+  /* ---------- DOT GRID SIGNATURE ---------- */
+  .signature {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--panel);
+    padding: 28px 24px 22px;
+  }
+  .signature::before, .signature::after,
+  .signature .tick-tr, .signature .tick-bl {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: var(--green-dim);
+  }
+  .signature::before { top: -1px; left: -1px; border-top: 2px solid var(--green-dim); border-left: 2px solid var(--green-dim); }
+  .signature::after { bottom: -1px; right: -1px; border-bottom: 2px solid var(--amber-dim); border-right: 2px solid var(--amber-dim); }
+
+  .sig-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+  .sig-label {
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .sig-stat {
+    font-family: var(--font-mono);
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .sig-stat .from { color: var(--text-dim); font-weight: 400; font-size: 0.65em; }
+  .sig-stat .arrow { color: var(--text-dim); font-weight: 400; }
+  .sig-stat .to { color: var(--amber); }
+
+  canvas#dotgrid { display: block; width: 100%; height: 220px; }
+
+  .sig-caption {
+    font-size: 0.86rem;
+    color: var(--text-muted);
+    margin-top: 12px;
+    max-width: 560px;
+  }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 48px;
+  }
+  .about-text p { color: var(--text-muted); font-size: 1.02rem; margin: 0 0 16px; max-width: 620px; }
+  .about-text strong { color: var(--text); font-weight: 500; }
+
+  .fact-card {
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    padding: 20px;
+    background: var(--panel);
+  }
+  .fact-card dl { margin: 0; }
+  .fact-card dt {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    margin-top: 16px;
+  }
+  .fact-card dt:first-child { margin-top: 0; }
+  .fact-card dd { margin: 4px 0 0; font-size: 0.92rem; color: var(--text); }
+
+  @media (max-width: 780px) {
+    .about-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- EXPERIENCE ---------- */
+  .exp-card {
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    background: var(--panel);
+    padding: 26px 28px;
+    margin-bottom: 18px;
+  }
+  .exp-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin-bottom: 4px;
+  }
+  .exp-role { font-family: var(--font-display); font-weight: 600; font-size: 1.12rem; }
+  .exp-date { font-family: var(--font-mono); font-size: 0.78rem; color: var(--green); white-space: nowrap; }
+  .exp-org { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px; }
+  .exp-org em { color: var(--text-dim); font-style: normal; }
+
+  ul.bullets { margin: 0; padding: 0; list-style: none; }
+  ul.bullets li {
+    position: relative;
+    padding-left: 22px;
+    margin-bottom: 10px;
+    font-size: 0.94rem;
+    color: var(--text-muted);
+  }
+  ul.bullets li:last-child { margin-bottom: 0; }
+  ul.bullets li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--green);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+  }
+  ul.bullets li strong { color: var(--text); font-weight: 500; }
+  ul.bullets li.flag::before { content: '▲'; color: var(--amber); font-size: 0.68rem; top: 3px; }
+
+  /* ---------- PROJECTS ---------- */
+  .proj-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .proj-card {
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    background: var(--panel);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .proj-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin: 0 0 14px;
+    line-height: 1.3;
+  }
+  .proj-card ul.bullets li { font-size: 0.88rem; }
+
+  /* ---------- SKILLS ---------- */
+  .skill-block { margin-bottom: 28px; }
+  .skill-block:last-child { margin-bottom: 0; }
+  .skill-block-label {
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-muted);
+    background: var(--panel-2);
+  }
+
+  /* ---------- EDUCATION ---------- */
+  .edu-card {
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    background: var(--panel);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+  }
+  .edu-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+  .edu-degree { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; }
+  .edu-date { font-family: var(--font-mono); font-size: 0.78rem; color: var(--green); }
+  .edu-school { font-size: 0.9rem; color: var(--text-muted); margin: 4px 0 12px; }
+  .edu-course { font-size: 0.86rem; color: var(--text-dim); }
+  .edu-gpa { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); margin-top: 8px; }
+
+  /* ---------- CERTS ---------- */
+  ul.cert-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+  ul.cert-list li {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    padding: 12px 16px;
+    background: var(--panel);
+  }
+
+  /* ---------- CONTACT / FOOTER ---------- */
+  footer {
+    padding: 64px 0 40px;
+  }
+  .footer-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .footer-status {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--amber);
+    border: 1px solid var(--amber-dim);
+    border-radius: 4px;
+    padding: 8px 14px;
+    display: inline-block;
+    margin-bottom: 18px;
+  }
+  .footer-status::before { content: '● '; }
+  .footer-links { display: flex; flex-direction: column; gap: 6px; font-family: var(--font-mono); font-size: 0.88rem; }
+  .footer-copy { font-size: 0.78rem; color: var(--text-dim); margin-top: 40px; }
+
+  @media (max-width: 640px) {
+    section { padding: 56px 0; }
+    .exp-card, .edu-card { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="nav-mark">abbas<span>@</span>rohawala</div>
+    <nav class="nav-links">
+      <a href="#about">About</a>
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#education">Education</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero" id="top">
+    <p class="hero-tag">M.S. Electrical Engineering — VLSI · University of Cincinnati</p>
+    <h1 class="hero-name">Abbas Rohawala</h1>
+    <p class="hero-sub">
+      I localize errors in <strong>fabricated silicon</strong> by comparing it against a golden reference —
+      and I build the <strong>hardware Trojans</strong> that stress-test the algorithm that finds them.
+    </p>
+    <div class="cta-row">
+      <a class="btn primary" href="mailto:rohawaai@mail.uc.edu">Email me</a>
+      <a class="btn" href="https://www.linkedin.com/in/abbasrohawala" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="btn" href="tel:+14256520045">+1 (425) 652-0045</a>
+    </div>
+
+    <div class="signature">
+      <div class="sig-head">
+        <div>
+          <div class="sig-label">Error localization — OpenRISC 1200</div>
+          <div class="sig-stat"><span class="from">1,000 suspects</span><span class="arrow">→</span><span class="to" id="counter">15</span></div>
+        </div>
+        <div class="sig-label" id="canvas-status">golden-reference comparison, live</div>
+      </div>
+      <canvas id="dotgrid" role="img" aria-label="Grid of 1000 suspect nets narrowing down to 15 flagged nets, including the injected buggy net"></canvas>
+      <p class="sig-caption">Reduced the suspect-net list by 98.5% via embedded runtime monitors and DFT scan-chain re-synthesis — correctly isolating the injected buggy net among the 15.</p>
+    </div>
+  </section>
+
+  <section id="about">
+    <p class="eyebrow">about</p>
+    <h2 class="section-title">Currently in the lab</h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          I'm a Graduate Research Assistant in the <strong>DDEL Lab</strong> at the University of Cincinnati,
+          working under <strong>Prof. Ranga Vemuri</strong> on error localization for post-fabrication
+          circuits using formal methods — and on the hardware-Trojan-insertion tooling used to test that
+          error-localization algorithm under adversarial conditions.
+        </p>
+        <p>
+          Before that, I was a Graduate Teaching Assistant for <strong>Intro to VLSI Design</strong>, guiding
+          students through the full RTL-to-GDSII flow across Cadence Virtuoso, Innovus, and Genus.
+        </p>
+        <p>
+          Currently looking for a <strong>Fall or Spring internship</strong> in the silicon and
+          semiconductor industry — physical design, DFT, or EDA tooling.
+        </p>
+      </div>
+      <div class="fact-card">
+        <dl>
+          <dt>Lab</dt>
+          <dd>DDEL Lab, University of Cincinnati</dd>
+          <dt>Advisor</dt>
+          <dd>Prof. Ranga Vemuri</dd>
+          <dt>Focus</dt>
+          <dd>Error localization &amp; formal verification for post-fab circuits</dd>
+          <dt>Looking for</dt>
+          <dd>Fall / Spring internship — silicon &amp; semiconductor industry</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience">
+    <p class="eyebrow">experience</p>
+    <h2 class="section-title">Professional experience</h2>
+
+    <div class="exp-card">
+      <div class="exp-head">
+        <span class="exp-role">Graduate Research Assistant</span>
+        <span class="exp-date">Jan 2025 — Present</span>
+      </div>
+      <div class="exp-org">DDEL Lab, University of Cincinnati · <em>Supervisor: Prof. Ranga Vemuri</em></div>
+      <ul class="bullets">
+        <li>Contribute to an NSF-funded project (IUCRC-1916762, CHEST) on hardware and embedded systems.</li>
+        <li>Generate chip layouts for multi-core SoCs using a Cadence 45nm process library, integrating runtime monitors and trace buffers for post-silicon debug.</li>
+        <li>Developed an error-localization algorithm for the <strong>OpenRISC 1200</strong> to overcome minimal post-fabrication observability, comparing fabricated-design behavior against a golden reference through embedded runtime monitors.</li>
+        <li class="flag">Inserted DFT scan chains and re-synthesized the monitored design, reducing the suspect-net list by <strong>98.5%</strong> — from 1,000 candidates to 15, correctly isolating the injected buggy net.</li>
+      </ul>
+    </div>
+
+    <div class="exp-card">
+      <div class="exp-head">
+        <span class="exp-role">Graduate Teaching Assistant</span>
+        <span class="exp-date">Aug 2025 — Dec 2025</span>
+      </div>
+      <div class="exp-org">EECE 6080C — Intro to VLSI Design, University of Cincinnati</div>
+      <ul class="bullets">
+        <li>Instructed students across the RTL-to-GDSII flow — custom cell design in Cadence Virtuoso, floorplanning and place &amp; route in Innovus, and logic synthesis in Genus.</li>
+        <li>Coached students through STA and DRC/LVS signoff checks, troubleshooting schematic-to-layout issues to reinforce physical design fundamentals.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="projects">
+    <p class="eyebrow">key_projects</p>
+    <h2 class="section-title">Selected projects</h2>
+    <div class="proj-grid">
+
+      <div class="proj-card">
+        <h3 class="proj-title">8-bit CPU with SRAM Integration — Design &amp; Security Verification</h3>
+        <ul class="bullets">
+          <li>Built a synthesizable 8-bit CPU (128-instruction ISA) with integrated 256×8 SRAM, carried from RTL through gate-level synthesis.</li>
+          <li>Authored 20+ SystemVerilog assertions, synthesized into hardware monitors embedded in the design for runtime observability.</li>
+          <li>Achieved <strong>95% stuck-at fault coverage</strong> via scan-chain DFT and ATPG, following formal verification of functional correctness.</li>
+        </ul>
+      </div>
+
+      <div class="proj-card">
+        <h3 class="proj-title">Parameterized Programmable Logic Tree</h3>
+        <ul class="bullets">
+          <li>Achieved <strong>833 MHz</strong> operation across a 512-input binary-tree LUT network via a bit-sliced, parameterized architecture.</li>
+          <li>Achieved 95% functional coverage via a SystemVerilog testbench with 1000+ randomized stimulus vectors.</li>
+          <li>Delivered a compact 250×250 μm physical layout, optimizing area and power for constrained designs.</li>
+        </ul>
+      </div>
+
+      <div class="proj-card">
+        <h3 class="proj-title">Design Automation Suite: Placement, Routing &amp; Logic Minimization</h3>
+        <ul class="bullets">
+          <li>Standard-cell placer (Simulated Annealing) reducing HPWL by up to <strong>65%</strong>, scaling to 25,000-cell netlists.</li>
+          <li>Congestion-aware multi-layer (M2–M9) global router with negotiated congestion and rip-up-and-reroute — zero-overflow legal routing on 45,000+ net designs.</li>
+          <li>Two-level logic synthesis and minimization flow — tautology checking, OFF-set generation, PLA minimization — reducing Boolean cover size by over 90%.</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="skills">
+    <p class="eyebrow">technical_skills</p>
+    <h2 class="section-title">Skills &amp; tools</h2>
+
+    <div class="skill-block">
+      <div class="skill-block-label">Programming</div>
+      <div class="chip-row">
+        <span class="chip">Python</span>
+        <span class="chip">Verilog-2005</span>
+        <span class="chip">SystemVerilog</span>
+        <span class="chip">SVA</span>
+        <span class="chip">TCL</span>
+        <span class="chip">C++</span>
+      </div>
+    </div>
+
+    <div class="skill-block">
+      <div class="skill-block-label">EDA tools</div>
+      <div class="chip-row">
+        <span class="chip">Cadence Xcelium</span>
+        <span class="chip">Cadence Genus</span>
+        <span class="chip">Cadence Innovus</span>
+        <span class="chip">Cadence JasperGold</span>
+        <span class="chip">Cadence Virtuoso</span>
+        <span class="chip">Cadence Modus</span>
+        <span class="chip">Cadence SuperLint</span>
+        <span class="chip">hspice</span>
+        <span class="chip">Synopsys Design Compiler</span>
+        <span class="chip">Synopsys TetraMAX ATPG</span>
+        <span class="chip">Synopsys Sentaurus</span>
+        <span class="chip">Xilinx Vivado</span>
+        <span class="chip">MATLAB / Simulink</span>
+        <span class="chip">finesim</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="education">
+    <p class="eyebrow">education</p>
+    <h2 class="section-title">Education</h2>
+
+    <div class="edu-card">
+      <div class="edu-head">
+        <span class="edu-degree">M.S. Electrical Engineering</span>
+        <span class="edu-date">Expected 2026</span>
+      </div>
+      <div class="edu-school">University of Cincinnati, OH</div>
+      <div class="edu-course">Coursework: Intro to VLSI Design, Trust in Hardware, VLSI Test and Power, Design Automation.</div>
+      <div class="edu-gpa">CGPA 3.7 / 4.0</div>
+    </div>
+
+    <div class="edu-card">
+      <div class="edu-head">
+        <span class="edu-degree">B.Tech. Electrical Engineering</span>
+        <span class="edu-date">June 2023</span>
+      </div>
+      <div class="edu-school">Maharashtra Institute of Technology, Pune, India</div>
+      <div class="edu-course">Coursework: Digital Signal Processing, Artificial Intelligence and Machine Learning, Power Systems Operation and Control, Advanced Control Systems.</div>
+      <div class="edu-gpa">CGPA 3.7 / 4.0</div>
+    </div>
+  </section>
+
+  <section id="certs">
+    <p class="eyebrow">certifications</p>
+    <h2 class="section-title">Certificates</h2>
+    <ul class="cert-list">
+      <li>Cadence Jasper Formal Fundamentals v2403</li>
+      <li>Cadence SystemVerilog Assertion v5.1</li>
+      <li>Cadence Verilog Language and Applications v28.0</li>
+      <li>CS50's Introduction to Programming with Python</li>
+    </ul>
+  </section>
+
+  <footer id="contact">
+    <p class="eyebrow">contact</p>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-status">open to fall / spring internships</div>
+        <div class="footer-links">
+          <a href="mailto:rohawaai@mail.uc.edu">rohawaai@mail.uc.edu</a>
+          <a href="tel:+14256520045">+1 (425) 652-0045</a>
+          <a href="https://www.linkedin.com/in/abbasrohawala" target="_blank" rel="noopener">linkedin.com/in/abbasrohawala</a>
+        </div>
+      </div>
+    </div>
+    <p class="footer-copy">Abbas Rohawala — DDEL Lab, University of Cincinnati.</p>
+  </footer>
+
+</main>
+
+<script>
+(function () {
+  var canvas = document.getElementById('dotgrid');
+  var counterEl = document.getElementById('counter');
+  var statusEl = document.getElementById('canvas-status');
+  if (!canvas) return;
+
+  var ctx = canvas.getContext('2d');
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var COLS = 50, ROWS = 20, TOTAL = COLS * ROWS;
+  var FLAGGED_COUNT = 15;
+
+  var flaggedSet = (function () {
+    var seed = 42;
+    function rand() {
+      seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+      return seed / 0x7fffffff;
+    }
+    var idxs = [];
+    for (var i = 0; i < TOTAL; i++) idxs.push(i);
+    for (var i2 = idxs.length - 1; i2 > 0; i2--) {
+      var j = Math.floor(rand() * (i2 + 1));
+      var tmp = idxs[i2]; idxs[i2] = idxs[j]; idxs[j] = tmp;
+    }
+    return new Set(idxs.slice(0, FLAGGED_COUNT));
+  })();
+
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var W, H, cellW, cellH;
+
+  function resize() {
+    var rect = canvas.getBoundingClientRect();
+    W = rect.width; H = rect.height;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cellW = W / COLS;
+    cellH = H / ROWS;
+  }
+
+  function dotPos(i) {
+    var col = i % COLS, row = Math.floor(i / COLS);
+    return { x: cellW * (col + 0.5), y: cellH * (row + 0.5) };
+  }
+
+  function draw(progress) {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < TOTAL; i++) {
+      var p = dotPos(i);
+      var flagged = flaggedSet.has(i);
+      var appear = Math.min(1, Math.max(0, (progress.appear - (i / TOTAL) * 0.5) / 0.5));
+      if (appear <= 0) continue;
+
+      var settle = progress.settle;
+      var radius, alpha, color, glow;
+
+      if (flagged) {
+        radius = 1.6 + settle * 1.6;
+        alpha = 0.5 + settle * 0.5;
+        color = '245, 166, 35';
+        glow = settle * 10;
+      } else {
+        radius = 1.6 - settle * 0.5;
+        alpha = (0.55 - settle * 0.4) ;
+        color = '74, 222, 128';
+        glow = 0;
+      }
+      alpha *= appear;
+
+      ctx.beginPath();
+      if (glow > 0) {
+        ctx.shadowBlur = glow;
+        ctx.shadowColor = 'rgba(' + color + ', 0.8)';
+      } else {
+        ctx.shadowBlur = 0;
+      }
+      ctx.fillStyle = 'rgba(' + color + ', ' + alpha.toFixed(3) + ')';
+      ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+  }
+
+  function ease(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function updateCounter(settle) {
+    var val = Math.round(1000 - (1000 - 15) * ease(settle));
+    counterEl.textContent = val.toLocaleString();
+    if (settle >= 1) counterEl.textContent = '15';
+  }
+
+  function runAnimation() {
+    var start = null;
+    var APPEAR_MS = 900;
+    var SETTLE_MS = 1300;
+    var TOTAL_MS = APPEAR_MS + SETTLE_MS;
+
+    function frame(ts) {
+      if (start === null) start = ts;
+      var elapsed = ts - start;
+
+      var appear = Math.min(1, elapsed / APPEAR_MS);
+      var settleRaw = Math.max(0, Math.min(1, (elapsed - APPEAR_MS * 0.4) / SETTLE_MS));
+      var settle = ease(settleRaw);
+
+      draw({ appear: appear, settle: settle });
+      updateCounter(settleRaw);
+
+      if (elapsed < TOTAL_MS) {
+        requestAnimationFrame(frame);
+      } else {
+        draw({ appear: 1, settle: 1 });
+        updateCounter(1);
+        statusEl.textContent = '1,000 nets analyzed — 15 flagged';
+        startPulse();
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function startPulse() {
+    if (reduceMotion) return;
+    var t0 = performance.now();
+    function pulseFrame(ts) {
+      var t = (ts - t0) / 1000;
+      var pulse = (Math.sin(t * 1.4) + 1) / 2;
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < TOTAL; i++) {
+        var p = dotPos(i);
+        var flagged = flaggedSet.has(i);
+        var radius, alpha, color, glow;
+        if (flagged) {
+          radius = 3.0 + pulse * 0.6;
+          alpha = 0.85 + pulse * 0.15;
+          color = '245, 166, 35';
+          glow = 8 + pulse * 6;
+        } else {
+          radius = 1.1;
+          alpha = 0.15;
+          color = '74, 222, 128';
+          glow = 0;
+        }
+        ctx.beginPath();
+        ctx.shadowBlur = glow;
+        ctx.shadowColor = 'rgba(' + color + ', 0.8)';
+        ctx.fillStyle = 'rgba(' + color + ', ' + alpha.toFixed(3) + ')';
+        ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+      requestAnimationFrame(pulseFrame);
+    }
+    requestAnimationFrame(pulseFrame);
+  }
+
+  function renderStatic() {
+    draw({ appear: 1, settle: 1 });
+    updateCounter(1);
+    statusEl.textContent = '1,000 nets analyzed — 15 flagged';
+  }
+
+  resize();
+  if (reduceMotion) {
+    renderStatic();
+  } else {
+    runAnimation();
+  }
+
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      resize();
+      if (reduceMotion) renderStatic();
+    }, 150);
+  });
+})();
+</script>
+
+</body>
+</html>
