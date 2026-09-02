@@ -130,6 +130,25 @@
 
   /* ---------- HERO ---------- */
   .hero { padding-top: 72px; padding-bottom: 56px; }
+  .hero-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap-reverse;
+  }
+  .hero-photo {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: 50% 22%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+  }
+  @media (max-width: 640px) {
+    .hero-photo { width: 92px; height: 92px; }
+  }
   .hero-tag {
     font-family: var(--font-mono);
     font-size: 0.78rem;
@@ -425,12 +444,17 @@
 <main class="wrap">
 
   <section class="hero" id="top">
-    <p class="hero-tag">M.S. Electrical Engineering — VLSI · University of Cincinnati</p>
-    <h1 class="hero-name">Abbas Rohawala</h1>
-    <p class="hero-sub">
-      I localize errors in <strong>fabricated silicon</strong> by comparing it against a golden reference —
-      and I build the <strong>hardware Trojans</strong> that stress-test the algorithm that finds them.
-    </p>
+    <div class="hero-top">
+      <div>
+        <p class="hero-tag">M.S. Electrical Engineering — VLSI · University of Cincinnati</p>
+        <h1 class="hero-name">Abbas Rohawala</h1>
+        <p class="hero-sub">
+          I localize errors in <strong>fabricated silicon</strong> by comparing it against a golden reference —
+          and I build the <strong>hardware Trojans</strong> that stress-test the algorithm that finds them.
+        </p>
+      </div>
+      <img class="hero-photo" src="assets/abbas-portrait.jpg" alt="Portrait of Abbas Rohawala">
+    </div>
     <div class="cta-row">
       <a class="btn primary" href="mailto:abbasroha12@gmail.com">Email me</a>
       <a class="btn" href="https://www.linkedin.com/in/abbasrohawala" target="_blank" rel="noopener">LinkedIn</a>
@@ -457,17 +481,20 @@
       <div class="about-text">
         <p>
           I'm a Graduate Research Assistant in the <strong>DDEL Lab</strong> at the University of Cincinnati,
-          working under <strong>Prof. Ranga Vemuri</strong> on error localization for post-fabrication
-          circuits using formal methods — and on the hardware-Trojan-insertion tooling used to test that
-          error-localization algorithm under adversarial conditions.
+          working under <strong>Dr. Ranga Vemuri</strong> on NSF- and industry-funded (CHEST, IUCRC-1916762)
+          hardware security and post-silicon debug research — running full RTL-to-GDSII flows in Cadence on
+          a 45nm process, with embedded runtime monitors, DFT/ATPG, and JasperGold formal fanin-cone analysis
+          for bug localization.
         </p>
         <p>
-          Before that, I was a Graduate Teaching Assistant for <strong>Intro to VLSI Design</strong>, guiding
-          students through the full RTL-to-GDSII flow across Cadence Virtuoso, Innovus, and Genus.
+          Outside the lab, I design and close timing on my own ASIC projects end to end: a 512-input
+          Programmable Logic Tree closed at <strong>442.6 MHz</strong> with a UVM-verified testbench, and a
+          fully pipelined sorting accelerator closed at <strong>1.32 GHz</strong>. I also TA
+          <strong>Intro to VLSI Design</strong>, mentoring students through the same RTL-to-GDSII flow.
         </p>
         <p>
-          Currently looking for a <strong>Fall or Spring internship</strong> in the silicon and
-          semiconductor industry — physical design, DFT, or EDA tooling.
+          Currently looking for a <strong>full-time Physical Design / DFT / Timing Closure</strong> role
+          where I can bring this hands-on tapeout experience to an industry chip team.
         </p>
       </div>
       <div class="fact-card">
@@ -475,11 +502,11 @@
           <dt>Lab</dt>
           <dd>DDEL Lab, University of Cincinnati</dd>
           <dt>Advisor</dt>
-          <dd>Prof. Ranga Vemuri</dd>
+          <dd>Dr. Ranga Vemuri</dd>
           <dt>Focus</dt>
-          <dd>Error localization &amp; formal verification for post-fab circuits</dd>
+          <dd>RTL-to-GDSII physical design, timing closure &amp; post-silicon debug at 45nm</dd>
           <dt>Looking for</dt>
-          <dd>Fall / Spring internship — silicon &amp; semiconductor industry</dd>
+          <dd>Full-time Physical Design / DFT / Timing Closure roles</dd>
         </dl>
       </div>
     </div>
@@ -494,12 +521,13 @@
         <span class="exp-role">Graduate Research Assistant</span>
         <span class="exp-date">Jan 2025 — Present</span>
       </div>
-      <div class="exp-org">DDEL Lab, University of Cincinnati · <em>Supervisor: Prof. Ranga Vemuri</em></div>
+      <div class="exp-org">DDEL Lab, University of Cincinnati · <em>Supervisor: Dr. Ranga Vemuri</em></div>
       <ul class="bullets">
-        <li>Contribute to an NSF-funded project (IUCRC-1916762, CHEST) on hardware and embedded systems.</li>
-        <li>Generate chip layouts for multi-core SoCs using a Cadence 45nm process library, integrating runtime monitors and trace buffers for post-silicon debug.</li>
-        <li>Developed an error-localization algorithm for the <strong>OpenRISC 1200</strong> to overcome minimal post-fabrication observability, comparing fabricated-design behavior against a golden reference through embedded runtime monitors.</li>
-        <li class="flag">Inserted DFT scan chains and re-synthesized the monitored design, reducing the suspect-net list by <strong>98.5%</strong> — from 1,000 candidates to 15, correctly isolating the injected buggy net.</li>
+        <li>Ran full RTL-to-GDSII flows in Cadence GPDK045 45nm with integrated runtime monitors and trace buffers, as part of an NSF- and industry-funded project (IUCRC-1916762, CHEST).</li>
+        <li>Synthesized and closed timing for an <strong>8-bit SRAM processor (751.1 MHz)</strong> and a <strong>32-bit OpenRISC core (206.6 MHz)</strong>.</li>
+        <li>Built SDC constraints and performed iterative setup/hold timing closure before and after CTS.</li>
+        <li class="flag">Integrated scan chains and generated Modus stuck-at ATPG patterns (<strong>800 patterns, 99.99%</strong> test-mode fault coverage); correlated STA with post-layout gate-level simulation.</li>
+        <li>Applied JasperGold formal fanin-cone analysis to localize an injected bug for post-silicon debug.</li>
       </ul>
     </div>
 
@@ -510,8 +538,19 @@
       </div>
       <div class="exp-org">EECE 6080C — Intro to VLSI Design, University of Cincinnati</div>
       <ul class="bullets">
-        <li>Instructed students across the RTL-to-GDSII flow — custom cell design in Cadence Virtuoso, floorplanning and place &amp; route in Innovus, and logic synthesis in Genus.</li>
-        <li>Coached students through STA and DRC/LVS signoff checks, troubleshooting schematic-to-layout issues to reinforce physical design fundamentals.</li>
+        <li>Mentored students through RTL-to-GDS flows including synthesis, STA, floorplanning, place &amp; route, CTS, and Innovus signoff.</li>
+        <li>Helped students debug timing analysis and post-layout simulation using Cadence Xcelium.</li>
+      </ul>
+    </div>
+
+    <div class="exp-card">
+      <div class="exp-head">
+        <span class="exp-role">Electrical Maintenance Intern</span>
+        <span class="exp-date">Sep 2023 — Jul 2024</span>
+      </div>
+      <div class="exp-org">Sudarshan Chemical Industries Ltd. · <em>Roha, India</em></div>
+      <ul class="bullets">
+        <li>Performed preventive and breakdown maintenance of plant electrical systems, including motors, drives, and control panels.</li>
       </ul>
     </div>
   </section>
@@ -522,29 +561,38 @@
     <div class="proj-grid">
 
       <div class="proj-card">
+        <h3 class="proj-title">Hardware Array Sorter (HAS): High-Speed Sorting Accelerator</h3>
+        <ul class="bullets">
+          <li>Designed and verified a fully pipelined odd-even transposition sorting network that sorts <em>N</em> 4-bit words in Verilog.</li>
+          <li>Built an automated RTL-to-GDSII driver that swept the synthesis clock and stepped sorter width <em>N</em> up to 20 to fit a fixed <strong>180×180 μm</strong> die.</li>
+          <li>Closed timing at <strong>1.32 GHz</strong> under full SDC constraints in Cadence Genus (GPDK045 45nm), with DFT cells inserted for structural debug.</li>
+        </ul>
+      </div>
+
+      <div class="proj-card">
         <h3 class="proj-title">8-bit CPU with SRAM Integration — Design &amp; Security Verification</h3>
         <ul class="bullets">
-          <li>Built a synthesizable 8-bit CPU (128-instruction ISA) with integrated 256×8 SRAM, carried from RTL through gate-level synthesis.</li>
-          <li>Authored 20+ SystemVerilog assertions, synthesized into hardware monitors embedded in the design for runtime observability.</li>
-          <li>Achieved <strong>95% stuck-at fault coverage</strong> via scan-chain DFT and ATPG, following formal verification of functional correctness.</li>
+          <li>Built a synthesizable 8-bit CPU (128-instruction ISA) with integrated 256-byte SRAM, carried through a full RTL-to-GDSII flow in Cadence GPDK045 45nm.</li>
+          <li>Converted assertion-based security properties into synthesizable hardware monitors for real-time, self-checking runtime verification.</li>
+          <li>Closed timing at <strong>751.1 MHz</strong>; inserted full scan chains and generated Modus stuck-at ATPG patterns (<strong>800 patterns, 99.99%</strong> test-mode fault coverage).</li>
         </ul>
       </div>
 
       <div class="proj-card">
         <h3 class="proj-title">Parameterized Programmable Logic Tree</h3>
         <ul class="bullets">
-          <li>Achieved <strong>833 MHz</strong> operation across a 512-input binary-tree LUT network via a bit-sliced, parameterized architecture.</li>
-          <li>Achieved 95% functional coverage via a SystemVerilog testbench with 1000+ randomized stimulus vectors.</li>
-          <li>Delivered a compact 250×250 μm physical layout, optimizing area and power for constrained designs.</li>
+          <li>Designed a bit-sliced, parameterized <strong>512-input</strong> binary-tree Programmable Logic Tree of programmable LUTs for FPGA/AI workloads.</li>
+          <li>Delivered a compact <strong>250×250 μm</strong> layout at 84.9% density (13,326 cells), reaching <strong>0 DRC</strong> on GPDK045 45nm.</li>
+          <li>Closed timing at <strong>442.6 MHz</strong>, functionally verified with a UVM environment reaching <strong>100% coverage</strong> across 204 checks.</li>
         </ul>
       </div>
 
       <div class="proj-card">
         <h3 class="proj-title">Design Automation Suite: Placement, Routing &amp; Logic Minimization</h3>
         <ul class="bullets">
-          <li>Standard-cell placer (Simulated Annealing) reducing HPWL by up to <strong>65%</strong>, scaling to 25,000-cell netlists.</li>
-          <li>Congestion-aware multi-layer (M2–M9) global router with negotiated congestion and rip-up-and-reroute — zero-overflow legal routing on 45,000+ net designs.</li>
-          <li>Two-level logic synthesis and minimization flow — tautology checking, OFF-set generation, PLA minimization — reducing Boolean cover size by over 90%.</li>
+          <li>Standard-cell placer (simulated annealing) minimizing HPWL across 15 benchmarks, scaling to <strong>25,000-cell</strong> netlists while preserving legality.</li>
+          <li>Multi-layer (M2–M9) negotiated-congestion global router using A* search with PathFinder-style rip-up-and-reroute — overlap-free legal routing on netlists up to <strong>60,000 nets</strong>.</li>
+          <li>Two-level logic synthesis and minimization flow: tautology checking (cofactor/unate reduction), complement generation, and PLA minimization.</li>
         </ul>
       </div>
 
@@ -586,6 +634,34 @@
         <span class="chip">finesim</span>
       </div>
     </div>
+
+    <div class="skill-block">
+      <div class="skill-block-label">Physical design</div>
+      <div class="chip-row">
+        <span class="chip">RTL-to-GDSII</span>
+        <span class="chip">Floorplanning</span>
+        <span class="chip">Power Planning</span>
+        <span class="chip">Partitioning</span>
+        <span class="chip">Place &amp; Route</span>
+        <span class="chip">SDC</span>
+        <span class="chip">CTS</span>
+        <span class="chip">RC Extraction</span>
+        <span class="chip">DFT &amp; Scan Chains</span>
+      </div>
+    </div>
+
+    <div class="skill-block">
+      <div class="skill-block-label">Timing &amp; verification</div>
+      <div class="chip-row">
+        <span class="chip">STA</span>
+        <span class="chip">DTA</span>
+        <span class="chip">MMMC STA</span>
+        <span class="chip">Setup/Hold Analysis</span>
+        <span class="chip">SDF Back-Annotation</span>
+        <span class="chip">WNS/TNS</span>
+        <span class="chip">DRC/LVS</span>
+      </div>
+    </div>
   </section>
 
   <section id="education">
@@ -594,8 +670,8 @@
 
     <div class="edu-card">
       <div class="edu-head">
-        <span class="edu-degree">M.S. Electrical Engineering</span>
-        <span class="edu-date">Expected 2026</span>
+        <span class="edu-degree">M.S. Electrical Engineering (VLSI)</span>
+        <span class="edu-date">Aug 2024 — Dec 2027 (Expected)</span>
       </div>
       <div class="edu-school">University of Cincinnati, OH</div>
       <div class="edu-course">Coursework: Intro to VLSI Design, Trust in Hardware, VLSI Test and Power, Design Automation.</div>
@@ -605,9 +681,9 @@
     <div class="edu-card">
       <div class="edu-head">
         <span class="edu-degree">B.Tech. Electrical Engineering</span>
-        <span class="edu-date">June 2023</span>
+        <span class="edu-date">Aug 2019 — Jun 2023</span>
       </div>
-      <div class="edu-school">Maharashtra Institute of Technology, Pune, India</div>
+      <div class="edu-school">Maharashtra Institute of Technology (MIT), Pune, India</div>
       <div class="edu-course">Coursework: Digital Signal Processing, Artificial Intelligence and Machine Learning, Power Systems Operation and Control, Advanced Control Systems.</div>
       <div class="edu-gpa">CGPA 3.7 / 4.0</div>
     </div>
@@ -628,7 +704,7 @@
     <p class="eyebrow">contact</p>
     <div class="footer-grid">
       <div>
-        <div class="footer-status">open to fall / spring internships</div>
+        <div class="footer-status">open to full-time physical design roles</div>
         <div class="footer-links">
           <a href="mailto:abbasroha12@gmail.com">abbasroha12@gmail.com</a>
           <a href="tel:+14256520045">+1 (425) 652-0045</a>
